@@ -1,4 +1,4 @@
-package ejercicios;
+package ejerciciosTCP;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Ej2Cliente {
+public class Ej3Cliente {
 
 	final static String HOST = "10.11.0.136"; 
 	final static int PORT = 5000;
@@ -17,7 +17,7 @@ public class Ej2Cliente {
 		DataOutputStream out;
 		int numPalabras;
 		int numCaracteres;
-		String palabra;
+		String palabra = "";
 		
 		try {
 			Socket sc = new Socket(HOST, PORT);
@@ -26,19 +26,16 @@ public class Ej2Cliente {
 			in = new DataInputStream(sc.getInputStream());
 			out = new DataOutputStream(sc.getOutputStream());
 			
-			System.out.println("Introduce número de líneas a enviar");
-			numPalabras = IO.readInt();
-			out.writeInt(numPalabras);
 			
-			for(int i = 1; i <=numPalabras; i++) {
-				System.out.println("Introduce la palabra " + i);
+			while(!palabra.equals("*")) {
+				System.out.println("Introduce una cadena ");
 				palabra = IO.readString();
 				out.writeUTF(palabra);
-				
+				if(!palabra.equals("*")) {
+				numCaracteres = in.readInt();
+				System.out.println(numCaracteres);
+				}
 			}
-			
-			numCaracteres = in.readInt();
-			System.out.println(numCaracteres);
 			
 			sc.close();
 			in.close();

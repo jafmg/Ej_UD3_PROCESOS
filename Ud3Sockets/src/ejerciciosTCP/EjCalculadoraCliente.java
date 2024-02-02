@@ -1,4 +1,4 @@
-package ejercicios;
+package ejerciciosTCP;
 
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -23,6 +23,7 @@ public class EjCalculadoraCliente {
 		int operando2;
 		String operador;
 		String cadena[];
+		String resultado;
 
 		try {
 			sc = new Socket(HOST, PORT);
@@ -46,9 +47,9 @@ public class EjCalculadoraCliente {
 
 				
 				output.writeUTF(p1.toString());
-				String resultado = input.readUTF();
+				resultado = input.readUTF();
 				
-				System.out.println(resultado);
+				System.out.println("Resultado calculado en el servidor" + resultado);
 				
 				
 

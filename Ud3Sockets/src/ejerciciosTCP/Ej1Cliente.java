@@ -1,4 +1,4 @@
-package ejercicios;
+package ejerciciosTCP;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -6,18 +6,15 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class Ej3Cliente {
+public class Ej1Cliente {
 
-	final static String HOST = "10.11.0.136"; 
+	final static String HOST = "192.168.1.36"; 
 	final static int PORT = 5000;
 	
 	public static void main(String[] args) {
 		
 		DataInputStream in;
 		DataOutputStream out;
-		int numPalabras;
-		int numCaracteres;
-		String palabra = "";
 		
 		try {
 			Socket sc = new Socket(HOST, PORT);
@@ -26,16 +23,11 @@ public class Ej3Cliente {
 			in = new DataInputStream(sc.getInputStream());
 			out = new DataOutputStream(sc.getOutputStream());
 			
-			
-			while(!palabra.equals("*")) {
-				System.out.println("Introduce una cadena ");
-				palabra = IO.readString();
-				out.writeUTF(palabra);
-				if(!palabra.equals("*")) {
-				numCaracteres = in.readInt();
-				System.out.println(numCaracteres);
-				}
-			}
+			String mensaje = in.readUTF();
+			System.out.println("Mensaje del servidor: " + mensaje);
+			mensaje.toLowerCase();
+			mensaje = mensaje.toLowerCase();
+			out.writeUTF(mensaje);
 			
 			sc.close();
 			in.close();
@@ -56,4 +48,3 @@ public class Ej3Cliente {
 	}
 
 }
-
