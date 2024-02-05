@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import librerias.IO;
+
 public class Ej3Cliente {
 
 	final static String HOST = "10.11.0.136"; 

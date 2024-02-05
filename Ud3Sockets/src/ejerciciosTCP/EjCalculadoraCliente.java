@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import librerias.IO;
+
 public class EjCalculadoraCliente {
 
 	final static String HOST = "127.0.0.1";

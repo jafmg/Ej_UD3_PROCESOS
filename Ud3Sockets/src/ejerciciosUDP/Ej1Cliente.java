@@ -30,6 +30,8 @@ public class Ej1Cliente {
 					direccion, PUERTO_SERVIDOR);
 			System.out.println("Enviado mensaje: " + mensaje);
 			socketUDP.send(peticion);
+			
+			buffer = new byte[1024]; //Reinicio el buffer
 			respuesta = new DatagramPacket(buffer, buffer.length);
 			socketUDP.receive(respuesta);
 			mensaje = new String(respuesta.getData());

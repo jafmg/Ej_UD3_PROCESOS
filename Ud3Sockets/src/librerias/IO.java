@@ -1,4 +1,4 @@
-package ejerciciosTCP;
+package librerias;
 
 import java.time.LocalDate;
 import java.util.Scanner;

@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class Ej1Servidor {
 	final static int PUERTO = 5000;
@@ -23,8 +24,10 @@ public class Ej1Servidor {
 			peticion = new DatagramPacket(buffer, buffer.length);
 			socketUDP.receive(peticion);
 			mensaje = new String(peticion.getData());
-			System.out.println(mensaje);
-			mensaje = new String("Eco del servidor: " + peticion.getData());
+			System.out.println(mensaje + "------------------");
+//			mensaje = new String("Eco del servidor: " + peticion.getData());
+			mensaje = "Eco del servidor: " + new String(peticion.getData(), StandardCharsets.UTF_8); //Para mostrar el array de forma legible
+			
 			puertoCliente = peticion.getPort();
 			direccion = peticion.getAddress();
 			buffer = mensaje.getBytes();
