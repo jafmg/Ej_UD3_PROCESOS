@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class Ej2Cliente {
@@ -30,21 +31,24 @@ public class Ej2Cliente {
 			peticion = new DatagramPacket(buffer, buffer.length, direccion, PUERTO);
 			System.out.println("Enviando ping al server");
 			
-			tiempoInicio = System.currentTimeMillis();
+//			tiempoInicio = System.currentTimeMillis();
 			socketUdp.send(peticion);
 			buffer = new byte[1024];
 			respuesta = new DatagramPacket(buffer, buffer.length);
-			
+			socketUdp.setSoTimeout(5000);
 			socketUdp.receive(respuesta);
-			tiempoFin = System.currentTimeMillis();
+//			tiempoFin = System.currentTimeMillis();
 			
-			if(tiempoFin - tiempoInicio <= 5000) {
-				mensaje = new String(respuesta.getData());
-				System.out.println(mensaje);
-			}else {
-				System.err.println("Connection time out");
-			}
+//			if(tiempoFin - tiempoInicio <= 5000) {
+//				mensaje = new String(respuesta.getData());
+//				System.out.println(mensaje);
+//			}else {
+//				System.err.println("Connection time out");
+//			}
 			
+			
+			mensaje = new String(respuesta.getData());
+			System.out.println(mensaje);
 			socketUdp.close();
 			
 			
@@ -54,8 +58,12 @@ public class Ej2Cliente {
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
+			System.err.println("Connection timeout");
+			socketUdp.close();
+			
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		
