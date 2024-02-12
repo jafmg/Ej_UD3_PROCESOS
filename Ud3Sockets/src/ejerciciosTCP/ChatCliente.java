@@ -9,7 +9,7 @@ import librerias.IO;
 
 public class ChatCliente {
 
-	final static String HOST = "10.11.0.136"; // Aquí va la direccion del servidor en red
+	final static String HOST = "localhost"; // Aquí va la direccion del servidor en red
 	final static int PORT = 5000;
 
 	public static void main(String[] args) {
@@ -34,9 +34,67 @@ public class ChatCliente {
 			
 			enviar.writeUTF(nick);
 			
+			System.out.println(recibir.readUTF());
+			
+			new HiloCliente(sc).start();
+			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 
 	}
+	
+	
 }
+
+
+class HiloCliente extends Thread {
+	
+	DataInputStream entrada;
+	DataOutputStream salida;
+	Socket sc;
+	public HiloCliente(Socket sc) {
+		
+		this.sc = sc;
+		
+		
+		
+	}
+	
+	@Override
+	public void run() {
+		try {
+			entrada = new DataInputStream(sc.getInputStream());
+			salida = new DataOutputStream(sc.getOutputStream());
+			String mensajeEnviar = "";
+			String mensajeEntrada = "";
+			
+			
+			while(!mensajeEnviar.equalsIgnoreCase("Salir")) {
+				
+				System.out.println("Introduzca su mensaje ");
+				mensajeEnviar = IO.readString();
+				
+				salida.writeUTF(mensajeEnviar);
+				
+				mensajeEntrada = entrada.readUTF();
+				System.out.println(mensajeEntrada);
+			}
+			System.out.println("saliendo");
+			entrada.close();
+			salida.close();
+			sc.close();
+			
+			
+			
+			
+		} catch (IOException e) {
+			
+			
+			
+		}
+		
+	}
+	
+}
+

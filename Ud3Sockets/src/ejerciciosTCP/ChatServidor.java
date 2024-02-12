@@ -6,16 +6,25 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 
 public class ChatServidor {
 	final static int PUERTO = 5000;
 	public static HashMap<Socket, String> conectados = new HashMap<Socket, String>();
 	
+	
 	public static void main(String[] args) {
+		ChatServidor chat = new ChatServidor();
+		chat.inicializarServidor();
+	}
+	
+	public void inicializarServidor() {
 		ServerSocket servidor = null;
 		Socket sc = null;
-
+		
+		
 		
 		
 		
@@ -37,8 +46,12 @@ public class ChatServidor {
 		while(true) {
 			try {
 				sc = servidor.accept();
-				conectados.put(sc, entrada.readUTF());
-//				MultiServer ms = 
+				System.out.println("Clientes conectados");
+//				conectados.put(sc, entrada.readUTF());
+				
+				
+				new HiloServer(sc, this).start();
+//				hilo.start();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,16 +69,91 @@ public class ChatServidor {
 		conectados.remove(sc);
 	}
 	
-	class hiloServer{
-		private DataInputStream entrada;
-		private DataOutputStream salida;
-		private Socket sc;
+	public synchronized static String obtenerNick(Socket sc) {
 		
-		public hiloServer(Socket sc) {
-			this.sc = sc;
+		return conectados.get(sc);
+		
+	}
+	
+	public synchronized static void enviarATodos(String mensaje, HashMap<Socket, String> listaUsuarios) {
+		
+		DataOutputStream salida;
+		for (Socket conexiones : listaUsuarios.keySet()) {
+			
+			try {
+				salida = new DataOutputStream(conexiones.getOutputStream());
+				System.out.println("Mensaje para " + conexiones);
+				salida.writeUTF(mensaje);
+//				salida.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
 		}
 		
 		
+	}
+	
+	
+}
+
+
+class HiloServer extends Thread{
+	private DataInputStream entrada;
+	private DataOutputStream salida;
+	private Socket sc;
+	private ChatServidor chat;
+	
+	public HiloServer(Socket sc, ChatServidor chat) {
+		this.sc = sc;
+		this.chat = chat;
+	}
+	
+	@Override
+	public void run() {
+		String mensajeEntrante = null;
+		String mensajeSalida = null;
+		try {
+			
+			entrada = new DataInputStream(sc.getInputStream());
+			salida = new DataOutputStream(sc.getOutputStream());
+			mensajeEntrante = entrada.readUTF();
+			chat.guardarNick(sc, mensajeEntrante);
+			mensajeSalida = "Cliente conectado con nick: " + mensajeEntrante;
+			salida.writeUTF(mensajeSalida);
+			
+			while(!mensajeEntrante.equalsIgnoreCase("Salir")) {
+				
+				mensajeEntrante = entrada.readUTF();
+				System.out.println("El cliente" + chat.obtenerNick(sc) + " dice: " + mensajeEntrante);
+				mensajeSalida = "Servidor dice: El usuario " + chat.obtenerNick(sc) + " dice: " + mensajeEntrante;
+				chat.enviarATodos(mensajeSalida, chat.conectados);
+				
+				
+				
+				
+				
+				
+			}
+			
+			System.out.println("El usuario " + chat.obtenerNick(sc) + "se va a salir");
+			chat.eliminarNick(sc, mensajeSalida);
+			entrada.close();
+			salida.close();
+			sc.close();
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
+	
+	
+	
 }
