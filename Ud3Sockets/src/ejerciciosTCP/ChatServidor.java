@@ -30,6 +30,7 @@ public class ChatServidor {
 		
 		DataInputStream entrada;
 		DataOutputStream salida;
+		
 
 		
 		
@@ -62,11 +63,13 @@ public class ChatServidor {
 	public synchronized static void guardarNick(Socket sc, String nick) {
 		
 		conectados.put(sc, nick);
+		System.out.println("guardado" + nick);
 		
 	}
 	
-	public synchronized static void eliminarNick(Socket sc, String nick) {
+	public synchronized static void eliminarNick(Socket sc) {
 		conectados.remove(sc);
+		System.out.println("eliminado");
 	}
 	
 	public synchronized static String obtenerNick(Socket sc) {
@@ -84,6 +87,8 @@ public class ChatServidor {
 				salida = new DataOutputStream(conexiones.getOutputStream());
 				System.out.println("Mensaje para " + conexiones);
 				salida.writeUTF(mensaje);
+				
+				System.out.println(conexiones+ "\n");
 //				salida.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -93,6 +98,8 @@ public class ChatServidor {
 			
 			
 		}
+		
+		
 		
 		
 	}
@@ -130,17 +137,21 @@ class HiloServer extends Thread{
 				mensajeEntrante = entrada.readUTF();
 				System.out.println("El cliente" + chat.obtenerNick(sc) + " dice: " + mensajeEntrante);
 				mensajeSalida = "Servidor dice: El usuario " + chat.obtenerNick(sc) + " dice: " + mensajeEntrante;
+				
 				chat.enviarATodos(mensajeSalida, chat.conectados);
 				
+				System.out.println(chat.conectados.size());
 				
-				
-				
+				if(mensajeSalida.equalsIgnoreCase("Salir")) {
+					System.out.println("El usuario " + chat.obtenerNick(sc) + "se va a salir");
+					salida.writeUTF("El usuario " + chat.obtenerNick(sc) + "ha dejado el chat");
+				}
 				
 				
 			}
 			
-			System.out.println("El usuario " + chat.obtenerNick(sc) + "se va a salir");
-			chat.eliminarNick(sc, mensajeSalida);
+			
+			chat.eliminarNick(sc);
 			entrada.close();
 			salida.close();
 			sc.close();

@@ -37,9 +37,11 @@ public class ChatCliente {
 			System.out.println(recibir.readUTF());
 			
 			new HiloCliente(sc).start();
+			new HiloClienteLeer(sc).start();
 			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
+			System.out.println("Desconectado");
 		}
 
 	}
@@ -77,8 +79,8 @@ class HiloCliente extends Thread {
 				
 				salida.writeUTF(mensajeEnviar);
 				
-				mensajeEntrada = entrada.readUTF();
-				System.out.println(mensajeEntrada);
+//				mensajeEntrada = entrada.readUTF();
+//				System.out.println(mensajeEntrada);
 			}
 			System.out.println("saliendo");
 			entrada.close();
@@ -95,6 +97,46 @@ class HiloCliente extends Thread {
 		}
 		
 	}
+	
+}
+
+class HiloClienteLeer extends Thread{
+	Socket sc;
+	DataInputStream entrada;
+	String mensaje = "";
+	
+	public HiloClienteLeer(Socket sc) {
+		this.sc = sc;
+		
+		
+		
+	}
+	
+	
+	@Override
+	public void run() {
+		
+		try {
+			entrada = new DataInputStream(sc.getInputStream());
+			
+			while(!mensaje.equalsIgnoreCase("Salir")) {
+				mensaje = entrada.readUTF();
+				System.out.println(mensaje);
+				
+		
+
+				
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Cerrado");
+		}
+		
+	}
+	
+	
 	
 }
 
